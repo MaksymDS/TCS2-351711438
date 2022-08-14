@@ -15,7 +15,6 @@
   Documentation on TL-B schemes can be found in https://ton.org/docs/#/overviews/TL-B
 -}
 
-
 () recv_internal() {
 }
 
