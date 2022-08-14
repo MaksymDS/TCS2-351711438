@@ -1,0 +1,95 @@
+{-
+
+  TASK 2 - Merge hashmaps (dictionaries)
+  Write the method that merges two hashmaps into one. When keys of hashmaps
+  interesect - values from first hashmap should be used, while discarded
+  key/value pairs should be stored into separate hashmap.
+  Method should return two hashmaps (merged_dict, discared_dict). If any
+  of resulting hashmaps is empty it should be represented by `null` value.
+  Hashmap key length is 256 bit. Each hashmap has at most 256 elements.
+
+-}
+
+() recv_internal() {
+}
+
+;; ;; testable
+;; (cell, cell) merge_hashmaps(cell dict1, cell dict2) method_id {
+
+;;     int key_len = 256;
+
+;;     (int key1, slice value1, int check1) = dict1.udict_get_min?(key_len);
+;;     (int key2, slice value2, int check2) = dict2.udict_get_min?(key_len);
+
+;;     if ((check1 + check2 == 0)) {
+;;         return (null(), null());
+;;     }
+
+;;     if (~ check1) {
+;;         return (null(), dict2);
+;;     }
+
+;;     if (~ check2) {
+;;         return (dict1, null());
+;;     }
+
+;;     ;; int sign = min(key1, key2);
+
+;;     ;; if (sign < 0) {
+
+;;     ;;     int add_f = dict1~idict_add?(key_len, key2, value2);
+;;     ;;     dict2 = add_f ? dict2~idict_delete?(key_len, key2) : dict2;
+
+;;     ;;     do {
+;;     ;;         (key2, value2, int f) = dict2.iget_dict_next?(key_len, key2);
+;;     ;;         add_f = dict1~idict_add?(key_len, key2, value2);
+;;     ;;         dict2 = add_f ? dict2~idict_delete?(key_len, key2) : dict2;
+
+;;     ;;     } until((~ f));
+
+;;     ;;     return (dict1, dict2);
+
+;;     ;; } else {
+
+;;     ;; int add_f = dict1~udict_add?(key_len, key2, value2);
+
+;;     ;; if (add_f) {
+;;     ;;    _ = dict2~udict_delete?(key_len, key2);
+;;     ;; }
+;;     ;; dict2 = add_f ? dict2~udict_delete?(key_len, key2) : dict2;
+
+;;     do {
+;;         int add_f = dict1~udict_add?(key_len, key2, value2);
+
+;;         if (add_f) {
+;;             _ = dict2~udict_delete?(key_len, key2);
+;;             }
+
+;;         (key2, value2, int f) = dict2.udict_get_next?(key_len, key2);
+        
+;;     } until((~ f));
+
+;;     return (dict1, dict2);
+;; }
+    
+;; testable
+(cell, cell) merge_hashmaps(cell dict1, cell dict2) method_id {
+    cell discared_dict = new_dict();
+
+    int key = -1;
+    do {
+        (key, slice value, int flag) = dict2.udict_get_next?(256, key);
+        if (flag) {
+            (dict1, int is_in_dict) = udict_add?(dict1, 256, key, value);
+            if (is_in_dict == 0) {
+                discared_dict~udict_set(256, key, value);
+            }
+        }
+    } until ( ~ flag);
+
+    if (dict1.dict_empty?()) {
+        dict1 = new_dict();
+    }
+
+    return (dict1, discared_dict);
+}
